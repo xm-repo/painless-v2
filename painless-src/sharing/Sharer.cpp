@@ -25,6 +25,8 @@
 
 #include <algorithm>
 #include <unistd.h>
+#include <chrono>
+#include <thread>
 
 /// Function exectuted by each sharer.
 /// This is main of sharer threads.
@@ -38,7 +40,12 @@ static void * mainThrSharing(void * arg)
 
    while (true) {
       // Sleep 
-      usleep(sleepTime);
+      
+#if defined(__linux__)
+    usleep(sleepTime);
+#else
+    std::this_thread::sleep_for(std::chrono::microseconds(sleepTime));
+#endif
    
       if (globalEnding)
          break; // Need to stop

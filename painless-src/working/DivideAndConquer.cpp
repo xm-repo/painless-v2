@@ -30,7 +30,8 @@
 #include <cmath>
 #include <string>
 #include <unistd.h>
-
+#include <thread>
+#include <chrono>
 
 #define TIME_BEFORE_INTERRUPTING 2 //in s
 
@@ -194,7 +195,13 @@ void * mainMasterDivideAndConquer(void * arg)
 
             pthread_mutex_unlock(&dc->mutexListsWorkers);
 
+            
+#if defined(__linux__)
             usleep((int)(delta * 1000000));
+#else
+            std::this_thread::sleep_for(std::chrono::microseconds((int)(delta * 1000000)));
+#endif
+
             continue;
          }
 

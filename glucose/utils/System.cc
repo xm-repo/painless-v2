@@ -20,10 +20,11 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 
 #include "utils/System.h"
 
-#if defined(__linux__)
+#if defined(__linux__) || (defined(__CYGWIN__) && !defined(_WIN32))
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 using namespace Glucose;
 
@@ -67,7 +68,7 @@ static inline int memReadPeak(void)
     return peak_kb;
 }
 
-double Glucose::memUsed() { return (double)memReadStat(0) * (double)getpagesize() / (1024*1024); }
+double Glucose::memUsed() { return (double)memReadStat(0) * (double)sysconf(_SC_PAGESIZE) / (1024*1024); }
 double Glucose::memUsedPeak() { 
     double peak = memReadPeak() / 1024;
     return peak == 0 ? memUsed() : peak; }
